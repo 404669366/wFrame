@@ -32,7 +32,7 @@ class FrameRun
             $controllerModel->$actionName();
             $controllerModel->afterAction();
         } catch (Exception $e){
-            var_dump($e->getMessage());
+            echo $e->getMessage();
             exit();
         }
     }
