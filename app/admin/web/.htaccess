@@ -1,0 +1,10 @@
+<IfModule rewrite_module>
+IndexIgnore */*
+RewriteEngine on
+
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-D
+RewriteRule . index.php
+
+</IfModule>
