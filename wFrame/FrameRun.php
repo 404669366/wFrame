@@ -24,16 +24,10 @@ class FrameRun
     public static function run()
     {
         try {
-            $urlInfo = new \wFrame\app\UrlTranslate();
-            $controllerName = 'app\controller\\' . $urlInfo->controller;
-            $actionName = $urlInfo->action;
-            $controllerModel = new $controllerName();
-            $controllerModel->beforeAction();
-            $controllerModel->$actionName();
-            $controllerModel->afterAction();
-        } catch (Exception $e){
-            echo $e->getMessage();
-            exit();
+            $object = new \wFrame\app\App();
+            $object->controllerBegin();
+        } catch (Exception $e) {
+            \wFrame\app\SendMsg::sendErrorMsg($e->getMessage());
         }
     }
 
@@ -47,9 +41,10 @@ class FrameRun
         $dir = self::$pathMap[$namespaceFirst]; // 文件基目录
         $filePath = substr($class, strlen($namespaceFirst)) . '.php'; // 文件相对路径
         $file = strtr($dir . $filePath, '\\', '/');
-        if (file_exists($file)) {
-            include $file;
+        if (!file_exists($file)) {
+            throw new Exception('访问错误');
         }
+        include $file;
     }
 }
 

@@ -24,4 +24,13 @@ return [
     'Cache' => [
 
     ],
+    //路由美化
+    'PrettifyUrl' => [
+        //美化开关
+        'switch' => true,
+        //规则映射
+        'rule' => [
+            '/aaa'=>'/index/index'
+        ],
+    ]
 ];

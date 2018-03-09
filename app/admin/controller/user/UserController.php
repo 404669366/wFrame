@@ -6,7 +6,7 @@
  * Time: 14:49
  */
 
-namespace app\controller;
+namespace app\controller\user;
 
 
 use wFrame\web\Controller;
@@ -14,6 +14,6 @@ use wFrame\web\Controller;
 class UserController extends Controller
 {
     public function actionLogin(){
-        return $this->render('user/login',['info'=>'这里是登陆页']);
+        return $this->render('login',['info'=>'这里是登陆页']);
     }
 }

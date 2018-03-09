@@ -11,6 +11,8 @@ defined('FRAME_PATH') or define('FRAME_PATH', __DIR__ . '/../../../wFrame');
 defined('VENDOR_PATH') or define('VENDOR_PATH', __DIR__ . '/../../../vendor');
 //项目路径
 defined('APP_PATH') or define('APP_PATH', __DIR__ . '/../');
+//视图路径
+defined('VIEW_PATH') or define('VIEW_PATH', __DIR__ . '/../view/');
 //配置
 $config = require(__DIR__ . '/../config/config.php');
 defined('CONFIG') or define('CONFIG', $config);

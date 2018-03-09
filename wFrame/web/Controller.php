@@ -29,7 +29,7 @@ class Controller
      */
     public function render($view = '', $data = [])
     {
-        $render = new Render($view);
+        $render = new Render($view,static::class);
         return $render->render($data);
     }
 

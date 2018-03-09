@@ -13,6 +13,6 @@ use wFrame\web\Controller;
 class IndexController extends Controller
 {
     public function actionIndex(){
-        return $this->render('index/index',['c'=>'cccccc']);
+        return $this->render('index',['data'=>'index']);
     }
 }
