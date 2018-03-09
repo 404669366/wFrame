@@ -25,7 +25,7 @@ class FrameRun
     {
         try {
             $object = new \wFrame\app\App();
-            $object->controllerBegin();
+            $object->run();
         } catch (Exception $e) {
             \wFrame\app\SendMsg::sendErrorMsg($e->getMessage());
         }

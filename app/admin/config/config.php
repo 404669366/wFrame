@@ -10,7 +10,7 @@ return [
     'defaultRoute' => 'index/index',
     //数据库
     'DB' => [
-        'class' => 'yii\db\Connection',
+        'class' => 'wFrame\app\Connection',
         'dsn' => 'mysql:host=127.0.0.1;dbname=my_love',
         'username' => 'root',
         'password' => 'root',
@@ -18,19 +18,30 @@ return [
     ],
     //redis
     'Redis' => [
-
+        'class' => 'wFrame\app\Connection',
+        'dsn' => 'mysql:host=127.0.0.1;dbname=my_love',
+        'username' => 'root',
+        'password' => 'root',
+        'charset' => 'utf8,'
     ],
     //文件缓存
     'Cache' => [
-
+        'class' => 'wFrame\app\Connection',
     ],
     //路由美化
     'PrettifyUrl' => [
         //美化开关
-        'switch' => true,
+        'switch' => false,
         //规则映射
         'rule' => [
-            '/aaa'=>'/index/index'
+            '/aaa' => '/index/index'
         ],
-    ]
+    ],
+    //特殊字符过滤正则
+    'Filter' => [
+        //参数过滤正则
+        'params' => "/\/|\~|\!|\@|\#|\\$|\%|\^|\&|\*|\(|\)|\_|\+|\{|\}|\:|\<|\>|\?|\[|\]|\,|\.|\/|\;|\'|\`|\-|\=|\\\|\|/",
+        //邮箱
+        'mail' => '',
+    ],
 ];

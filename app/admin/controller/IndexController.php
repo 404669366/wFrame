@@ -12,7 +12,9 @@ use wFrame\web\Controller;
 
 class IndexController extends Controller
 {
-    public function actionIndex(){
-        return $this->render('index',['data'=>'index']);
+    public function actionIndex($app){
+        if($app->isGet()){
+            return $this->render('index',['data'=>'index']);
+        }
     }
 }
