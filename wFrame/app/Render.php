@@ -23,7 +23,7 @@ class Render
             $path = VIEW_PATH . strtolower($path) . $view . '.php';
         }
         if (!file_exists($path)) {
-            throw new \Exception('视图文件不存在');
+            Error::addError('视图文件不存在');
         }
         $this->viewPath = $path;
     }
@@ -31,7 +31,7 @@ class Render
     public function render($data)
     {
         if (!is_array($data)) {
-            throw new \Exception('视图参数必须是数组');
+            Error::addError('视图参数必须是数组');
         }
         ob_start();
         extract($data, EXTR_OVERWRITE);

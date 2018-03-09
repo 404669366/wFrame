@@ -14,27 +14,54 @@ namespace wFrame\app;
  */
 class App
 {
-    //当前访问路由
+    /**
+     * @var mixed|string  当前访问路由
+     */
     public $url;
-    //匹配的控制器路径
+    /**
+     * @var string 匹配的控制器路径
+     */
     public $realController;
-    //当前访问控制器
+    /**
+     * @var string 当前访问控制器
+     */
     public $controller;
-    //当前访问方法
+    /**
+     * @var string 当前访问方法
+     */
     public $action;
-    //get参数
+    /**
+     * @var mixed get参数
+     */
     public $get;
-    //post参数
+    /**
+     * @var mixed post参数
+     */
     public $post;
-    //自生对象
+    /**
+     * @var object 文件缓存对象
+     */
+    public $cache;
+    /**
+     * @var object redis对象
+     */
+    public $redis;
+    /**
+     * @var App 自生对象
+     */
     private $instance;
 
+    /**
+     * App constructor.
+     */
     public function __construct()
     {
         $this->instance = &$this;
         $this->get = $this->handle($_GET);
         $this->post = $this->handle($_POST);
         $this->url = self::getUrl();
+        $this->cache = new FileCache();
+        $this->redis = new Redis(CONFIG['Redis']);
         $this->translate();
     }
 

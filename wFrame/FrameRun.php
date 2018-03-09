@@ -27,7 +27,7 @@ class FrameRun
             $object = new \wFrame\app\App();
             $object->run();
         } catch (Exception $e) {
-            \wFrame\app\SendMsg::sendErrorMsg($e->getMessage());
+            \wFrame\app\Error::showError($e);
         }
     }
 
@@ -42,7 +42,7 @@ class FrameRun
         $filePath = substr($class, strlen($namespaceFirst)) . '.php'; // 文件相对路径
         $file = strtr($dir . $filePath, '\\', '/');
         if (!file_exists($file)) {
-            throw new Exception('访问错误');
+            \wFrame\app\Error::addError('访问错误');
         }
         include $file;
     }

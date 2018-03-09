@@ -13,6 +13,8 @@ defined('VENDOR_PATH') or define('VENDOR_PATH', __DIR__ . '/../../../vendor');
 defined('APP_PATH') or define('APP_PATH', __DIR__ . '/../');
 //视图路径
 defined('VIEW_PATH') or define('VIEW_PATH', __DIR__ . '/../view/');
+//缓存路径
+defined('RUNTIME_PATH') or define('RUNTIME_PATH', __DIR__ . '/../../../runtime');
 //配置
 $config = require(__DIR__ . '/../config/config.php');
 defined('CONFIG') or define('CONFIG', $config);

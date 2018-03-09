@@ -18,15 +18,13 @@ return [
     ],
     //redis
     'Redis' => [
-        'class' => 'wFrame\app\Connection',
-        'dsn' => 'mysql:host=127.0.0.1;dbname=my_love',
-        'username' => 'root',
-        'password' => 'root',
-        'charset' => 'utf8,'
+        'host' => '127.0.0.1',
+        'port' => '6379',
     ],
     //文件缓存
     'Cache' => [
-        'class' => 'wFrame\app\Connection',
+        //缓存路径
+        'cachePath' => RUNTIME_PATH.'/cache',
     ],
     //路由美化
     'PrettifyUrl' => [
