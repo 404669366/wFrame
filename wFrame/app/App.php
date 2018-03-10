@@ -142,16 +142,26 @@ class App
      */
     public function redis($config = CONFIG['Redis'])
     {
-        return new RedisCache($config);
+        return RedisCache::redis($config);
     }
 
     /**
      * 文件缓存
-     * @return object FileCache
+     * @param $config
+     * @return object|FileCache
      */
-    public function cache()
+    public function cache($config = CONFIG['Cache']['cachePath'])
     {
-        return new FileCache();
+        return FileCache::cache($config);
+    }
+
+    /**
+     * cookie
+     * @return object Cookie
+     */
+    public function cookie()
+    {
+        return new Cookie();
     }
 
     /**

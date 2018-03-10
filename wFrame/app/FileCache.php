@@ -10,54 +10,69 @@ namespace wFrame\app;
 class FileCache
 {
     /**
+     * 单例模式入口
+     * @param string $config
+     * @return object|FileCache
+     */
+    public static function cache($config = '')
+    {
+        if (!self::$cache) {
+            self::$cache = new self($config);
+        }
+        return self::$cache;
+    }
+    /**
      * @var string 字符串的每一个缓存键前缀。这是你储存时所需要的。
      * 不同的应用程序以避免冲突同样在[[cachepath]]缓存数据。
      * 为了确保互操作性，只能使用字母数字字符。
      */
-    public $keyPrefix = '';
+    private $keyPrefix = '';
     /**
      * @var string 存储缓存文件的目录。您可以在这里使用路径别名。
      * 如果没有设置，它将在应用程序运行时路径下使用“缓存”子目录。
      */
-    public $cachePath = '';
+    private $cachePath = '';
     /**
      * @var string 缓存文件后缀。默认为“bin”。
      */
-    public $cacheFileSuffix = '.bin';
+    private $cacheFileSuffix = '.bin';
     /**
      * @var integer 存储高速缓存文件的子目录的级别。默认值为0。
      * 如果系统有大量的缓存文件（如一百万），您可以使用更大的值（通常不大于3）。使用子目录主要是为了确保文件系统不会因为一个目录有太多文件而不堪重负。
      */
-    public $directoryLevel = 0;
+    private $directoryLevel = 0;
     /**
      * @var integer 当在缓存中存储一段数据时，应该执行垃圾收集（GC）的概率（百万分之一）。
      * 默认为10，意味着0.001%的几率。这个数字应该在0到1000000之间。值0意味着根本不会执行GC。
      */
-    public $gcProbability = 10;
+    private $gcProbability = 10;
     /**
      * @var integer 为新创建的缓存文件设置权限。
      * 这个值可以通过PHP chmod()函数使用。没有umask将应用。
      * 如果未设置，则权限将由当前环境决定。
      */
-    public $fileMode;
+    private $fileMode;
+
     /**
      * @var integer 将要为新创建的目录设置的权限整数。
      * 这个值可以通过PHP chmod()函数使用。没有umask将应用。
      * 默认值为0775，表示目录是由所有者和组读写的，但对其他用户只读。
      */
-    public $dirMode = 0775;
+    private $dirMode = 0775;
+
+    /**
+     * @var object 类自身对象
+     */
+    private static $cache;
 
     /**
      * 初始化
+     * FileCache constructor.
+     * @param string $config
      */
-    public function __construct()
+    private function __construct($config = '')
     {
-        $this->cachePath = CONFIG['Cache']['cachePath'];
-    }
-
-    public function FileCache()
-    {
-        $this->__construct();
+        $this->cachePath = $config;
     }
 
     /**

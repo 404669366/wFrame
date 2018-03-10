@@ -10,22 +10,44 @@ namespace wFrame\app;
 
 class RedisCache
 {
-    /**
-     * redis实例化时静态变量
-     * @var null|Redis
-     */
-    public $redis_obj = null;
 
     /**
-     * Redis constructor.
+     * 单例划redis类
+     * @param array $config
+     * @return \Redis|RedisCache
+     */
+    public static function redis($config = ['host' => '127.0.0.1', 'port' => 6379, 'password' => ''])
+    {
+        if (!self::$redis) {
+            self::$redis = new self($config);
+        }
+        return self::$redis;
+    }
+
+    /**
+     * redis自身对象
+     * @var \Redis
+     */
+    private static $redis;
+
+    /**
+     * redis实例化时静态变量
+     * @var \Redis
+     */
+    private $redis_obj;
+
+    /**
+     * RedisCache constructor.
      * @param array $config
      */
-    public function __construct($config = ['host' => '127.0.0.1', 'port' => 6379, 'password' => ''])
+    private function __construct($config = [])
     {
-        @$this->redis_obj = new \Redis();
-        $this->redis_obj->connect($config['host'], $config['port']) or die( Error::addError('连接Redis服务器出错'));
-        $this->redis_obj->auth($config['password']);
-        return $this->redis_obj;
+        $redis = new \Redis();
+        if(!$redis->connect($config['host'], $config['port'])){
+            Error::addError('连接Redis服务器出错');
+        }
+        $redis->auth($config['password']);
+        $this->redis_obj = $redis;
     }
 
     /*------------------------------------start 1.string结构----------------------------------------------------*/
@@ -119,7 +141,8 @@ class RedisCache
 
     /**
      * 查，取集合对应元素
-     * @param string $key 集合名字
+     * @param $key
+     * @return bool
      */
     public function smembers($key)
     {
@@ -132,11 +155,12 @@ class RedisCache
 
 
     /*------------------------------------4.start sort set结构----------------------------------------------------*/
-    /*
+    /**
      * 增，改，构建一个集合(有序集合),支持批量写入,更新
-     * @param string $key 集合名称
-     * @param array $score_value key为scoll, value为该权的值
-     * @return int 插入操作成功返回插入数量【,更新操作返回0】
+     * @param $key
+     * @param $score_value
+     * @param int $timeOut
+     * @return bool|int
      */
     public function zadd($key, $score_value, $timeOut = 0)
     {
@@ -152,11 +176,11 @@ class RedisCache
 
     /**
      * 查，有序集合查询，可升序降序,默认从第一条开始，查询一条数据
-     * @param $key ,查询的键值
-     * @param $min ,从第$min条开始
-     * @param $max，查询的条数
-     * @param $order ，asc表示升序排序，desc表示降序排序
-     * @return array|bool 如果成功，返回查询信息，如果失败返回false
+     * @param $key
+     * @param int $min
+     * @param int $num
+     * @param string $order
+     * @return bool
      */
     public function zrange($key, $min = 0, $num = 1, $order = 'desc')
     {
@@ -173,10 +197,10 @@ class RedisCache
 
     /**
      * 返回集合key中，成员member的排名
-     * @param $key，键值
-     * @param $member，scroll值
-     * @param $type ,是顺序查找还是逆序
-     * @return bool,键值不存在返回false，存在返回其排名下标
+     * @param $key
+     * @param $member
+     * @param string $type
+     * @return bool
      */
     public function zrank($key, $member, $type = 'desc')
     {
@@ -193,10 +217,9 @@ class RedisCache
     /**
      * 返回名称为key的zset中score >= star且score <= end的所有元素
      * @param $key
-     * @param $member
-     * @param $star，
-     * @param $end ,
-     * @return array
+     * @param $star
+     * @param $end
+     * @return mixed
      */
     public function zrangbyscore($key, $star, $end)
     {
@@ -219,12 +242,12 @@ class RedisCache
     /*------------------------------------5.hash结构----------------------------------------------------*/
     /**
      * 增，以json格式插入数据到缓存,hash类型
-     * @param $redis_key |array , $redis_key['key']数据库的表名称;$redis_key['field'],下标key
-     * @param $token ,该活动的token，用于区分标识
-     * @param $id ,该活动的ID，用于区分标识
-     * @param $data |array ，要插入的数据,
-     * @param $timeOut ，过期时间，默认为0
-     * @return $number 插入成功返回1【,更新操作返回0】
+     * @param $redis_key
+     * @param $token
+     * @param $id
+     * @param $data
+     * @param int $timeOut
+     * @return mixed
      */
     public function hset_json($redis_key, $token, $id, $data, $timeOut = 0)
     {
@@ -238,10 +261,10 @@ class RedisCache
 
     /**
      * 查，json形式存储的哈希缓存，有值则返回;无值则查询数据库并存入缓存
-     * @param $redis ,$redis['key'],$redis['field']分别是hash的表名称和键值
-     * @param $token ,$token为公众号
-     * @param $token ,$id为活动ID
-     * @return bool|array, 成功返回要查询的信息，失败或不存在返回false
+     * @param $redis_key
+     * @param $token
+     * @param $id
+     * @return bool|mixed
      */
     public function hget_json($redis_key, $token, $id)
     {
@@ -310,11 +333,11 @@ class RedisCache
     /*------------------------------------其他结构----------------------------------------------------*/
     /**
      * 设置自增,自减功能
-     * @param $key ，要改变的键值
-     * @param int $num ，改变的幅度，默认为1
-     * @param string $member ，类型是zset或hash，需要在输入member或filed字段
-     * @param string $type，类型，default为普通增减 ,还有:zset,hash
-     * @return bool|int 成功返回自增后的scroll整数，失败返回false
+     * @param $key
+     * @param int $num
+     * @param string $member
+     * @param string $type
+     * @return bool
      */
     public function incre($key, $num = 1, $member = '', $type = '')
     {
@@ -354,10 +377,10 @@ class RedisCache
 
     /**
      * 检验某个键值是否存在
-     * @param $keys ，键值
-     * @param string $type，类型，默认为常规
-     * @param string $field。若为hash类型，输入 $field
-     * @return bool
+     * @param $keys
+     * @param string $type
+     * @param string $field
+     * @return mixed
      */
     public function exists($keys, $type = '', $field = '')
     {
@@ -374,10 +397,10 @@ class RedisCache
 
     /**
      * 删除缓存
-     * @param string|array $key，键值
-     * @param $type，类型，默认为常规，还有hash ,zset
-     * @param string $field ,hash=>表示$field值，set=>表示value,zset=>表示value值，list类型特殊暂时不加
-     * @return int | ，返回删除的个数
+     * @param $key
+     * @param $type
+     * @param string $field
+     * @return mixed
      */
     public function delete($key, $type, $field = '')
     {
@@ -398,7 +421,11 @@ class RedisCache
         return $re;
     }
 
-    //日志记录
+    /**
+     * 日志记录
+     * @param $log_content
+     * @param string $position
+     */
     public function logger($log_content, $position = 'user')
     {
         $max_size = 1000000;   //声明日志的最大尺寸1000K
@@ -420,13 +447,5 @@ class RedisCache
 
         //写入日志，内容前加上时间， 后面加上换行， 以追加的方式写入
         file_put_contents($log_filename, date('Y-m-d_H:i:s') . " " . $log_content . "\n", FILE_APPEND);
-    }
-
-
-    public function __destruct()
-    {
-        if($this->redis_obj){
-            $this->redis_obj->close();
-        }
     }
 }
