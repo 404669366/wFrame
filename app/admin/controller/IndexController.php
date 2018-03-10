@@ -8,12 +8,18 @@
 
 namespace app\controller;
 
+use wFrame\app\SqlBuild;
 use wFrame\web\Controller;
 
 class IndexController extends Controller
 {
     public function actionIndex()
     {
+        var_dump(SqlBuild::find()
+            ->select()
+            ->from(['user','u'])
+            ->where(['name',123])
+            ->getSql());
         return $this->render('index', ['data' => '这里是首页']);
     }
 
