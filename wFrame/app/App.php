@@ -45,14 +45,13 @@ class App
     /**
      * @var App 自生对象
      */
-    public static $app;
+    private static $instans;
 
     /**
      * App constructor.
      */
-    public function __construct()
+    private function __construct()
     {
-        self::$app = &$this;
         $this->get = $this->handle($_GET);
         $this->post = $this->handle($_POST);
         $this->realUrl = self::getUrl(true);
@@ -61,19 +60,15 @@ class App
     }
 
     /**
-     * 创建控制器模型,开始程序
+     * 单例入口方法
+     * @return App
      */
-    public function run()
+    public static function app()
     {
-        $controllerName = $this->realController;
-        $action = $this->action;
-        $controller = new $controllerName();
-        if (!method_exists($controller, $action)) {
-            Error::addError('访问错误');
+        if (!self::$instans) {
+            self::$instans = new self();
         }
-        $controller->beforeAction();
-        $controller->$action($this->get);
-        $controller->afterAction();
+        return self::$instans;
     }
 
     /**
@@ -128,7 +123,8 @@ class App
     public function handle($params, $ruleName = 'params')
     {
         if ($params) {
-            isset(CONFIG['Filter'][$ruleName]) ? $rule = CONFIG['Filter'][$ruleName] : $rule = '';
+            $filter = CONFIG['Filter'];
+            isset($filter[$ruleName]) ? $rule = $filter[$ruleName] : $rule = '';
             if (is_array($params)) {
                 foreach ($params as &$v) {
                     $v = preg_replace($rule, '', $v);
@@ -193,8 +189,9 @@ class App
         if ($url == '/') {
             $url .= CONFIG['defaultRoute'];
         }
-        if (CONFIG['PrettifyUrl']['switch'] && isset(CONFIG['PrettifyUrl']['rule'][$url])) {
-            $url = CONFIG['PrettifyUrl']['rule'][$url];
+        $prettifyUrl = CONFIG['PrettifyUrl'];
+        if ($prettifyUrl['switch'] && isset($prettifyUrl['rule'][$url])) {
+            $url = $prettifyUrl['rule'][$url];
         }
         return $url;
     }

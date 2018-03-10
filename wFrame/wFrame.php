@@ -24,8 +24,16 @@ class wFrame
     public static function run()
     {
         try {
-            $object = new \wFrame\app\App();
-            $object->run();
+            $app = \wFrame\app\App::app();
+            $controllerName = $app->realController;
+            $action = $app->action;
+            $controller = new $controllerName();
+            if (!method_exists($controller, $action)) {
+                \wFrame\app\Error::addError('访问错误');
+            }
+            $controller->beforeAction();
+            $controller->$action($app);
+            $controller->afterAction();
         } catch (Exception $e) {
             \wFrame\app\Error::showError($e->getMessage());
         }

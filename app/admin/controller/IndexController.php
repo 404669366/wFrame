@@ -14,7 +14,7 @@ class IndexController extends Controller
 {
     public function actionIndex()
     {
-        return $this->render('index', ['data' => 'index']);
+        return $this->render('index', ['data' => '这里是首页']);
     }
 
 }

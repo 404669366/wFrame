@@ -10,8 +10,7 @@ return [
     'defaultRoute' => 'index/index',
     //数据库
     'DB' => [
-        'class' => 'wFrame\app\Connection',
-        'dsn' => 'mysql:host=127.0.0.1;dbname=my_love',
+        'dsn' => 'mysql:host=127.0.0.1;dbname=test',
         'username' => 'root',
         'password' => 'root',
         'charset' => 'utf8,'
@@ -33,7 +32,7 @@ return [
         'switch' => true,
         //默认使用模板
         'use' => 'wFrame',
-        //模板文件注册(按加载顺序填写,当前视图使用关键字self)
+        //模板文件注册(按加载顺序填写,当前编辑视图使用关键字self)
         'rule' => [
             'wFrame' => [
                 'head',
@@ -48,7 +47,7 @@ return [
         'switch' => true,
         //规则映射
         'rule' => [
-            '/aaa' => '/index/index'
+            '/index' => '/index/index'
         ],
     ],
     //特殊字符过滤正则

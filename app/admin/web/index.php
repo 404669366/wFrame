@@ -17,8 +17,10 @@ defined('VIEW_PATH') or define('VIEW_PATH', __DIR__ . '/../view/');
 defined('LAYOUT_PATH') or define('LAYOUT_PATH', __DIR__ . '/layout');
 //缓存路径
 defined('RUNTIME_PATH') or define('RUNTIME_PATH', __DIR__ . '/../../../runtime');
-//配置
+
+//导入配置
 $config = require(__DIR__ . '/../config/config.php');
+//定义配置常量
 defined('CONFIG') or define('CONFIG', $config);
 
 require(FRAME_PATH . '/wFrame.php');
