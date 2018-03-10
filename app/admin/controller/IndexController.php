@@ -12,9 +12,6 @@ use wFrame\web\Controller;
 
 class IndexController extends Controller
 {
-    /**
-     * @return bool
-     */
     public function actionIndex()
     {
         return $this->render('index', ['data' => 'index']);

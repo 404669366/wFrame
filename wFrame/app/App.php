@@ -43,14 +43,6 @@ class App
      */
     public $post;
     /**
-     * @var object 文件缓存对象
-     */
-    public $cache;
-    /**
-     * @var object redis对象
-     */
-    public $redis;
-    /**
      * @var App 自生对象
      */
     public static $app;
@@ -65,8 +57,6 @@ class App
         $this->post = $this->handle($_POST);
         $this->realUrl = self::getUrl(true);
         $this->url = self::getUrl();
-        $this->cache = new FileCache();
-        //$this->redis = new Redis(CONFIG['Redis']);
         $this->translate();
     }
 
@@ -151,6 +141,24 @@ class App
     }
 
     /**
+     * redis缓存
+     * @return object RedisCache
+     */
+    public function redis($config = CONFIG['Redis'])
+    {
+        return new RedisCache($config);
+    }
+
+    /**
+     * 文件缓存
+     * @return object FileCache
+     */
+    public function cache()
+    {
+        return new FileCache();
+    }
+
+    /**
      * 翻译路由
      */
     private function translate()
@@ -179,7 +187,7 @@ class App
         if ($bad) {
             $url = str_replace($bad, '', $url);
         }
-        if($real){
+        if ($real) {
             return $url;
         }
         if ($url == '/') {

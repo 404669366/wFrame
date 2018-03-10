@@ -21,5 +21,5 @@ defined('RUNTIME_PATH') or define('RUNTIME_PATH', __DIR__ . '/../../../runtime')
 $config = require(__DIR__ . '/../config/config.php');
 defined('CONFIG') or define('CONFIG', $config);
 
-require(FRAME_PATH . '/FrameRun.php');
-FrameRun::run();
+require(FRAME_PATH . '/wFrame.php');
+wFrame::run();

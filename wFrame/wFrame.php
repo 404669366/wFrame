@@ -6,7 +6,7 @@
  * Date: 2018/3/7
  * Time: 14:24
  */
-class FrameRun
+class wFrame
 {
     /**
      * 根命名空间路径映射
@@ -48,4 +48,4 @@ class FrameRun
     }
 }
 
-spl_autoload_register('FrameRun::load'); // 注册自动加载
+spl_autoload_register('wFrame::load'); // 注册自动加载
