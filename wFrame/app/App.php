@@ -19,6 +19,10 @@ class App
      */
     public $url;
     /**
+     * @var mixed|string 当前访问真实路由
+     */
+    public $realUrl;
+    /**
      * @var string 匹配的控制器路径
      */
     public $realController;
@@ -49,19 +53,20 @@ class App
     /**
      * @var App 自生对象
      */
-    private $instance;
+    public static $app;
 
     /**
      * App constructor.
      */
     public function __construct()
     {
-        $this->instance = &$this;
+        self::$app = &$this;
         $this->get = $this->handle($_GET);
         $this->post = $this->handle($_POST);
+        $this->realUrl = self::getUrl(true);
         $this->url = self::getUrl();
         $this->cache = new FileCache();
-        $this->redis = new Redis(CONFIG['Redis']);
+        //$this->redis = new Redis(CONFIG['Redis']);
         $this->translate();
     }
 
@@ -73,8 +78,11 @@ class App
         $controllerName = $this->realController;
         $action = $this->action;
         $controller = new $controllerName();
+        if (!method_exists($controller, $action)) {
+            Error::addError('访问错误');
+        }
         $controller->beforeAction();
-        $controller->$action($this->instance);
+        $controller->$action($this->get);
         $controller->afterAction();
     }
 
@@ -130,10 +138,7 @@ class App
     public function handle($params, $ruleName = 'params')
     {
         if ($params) {
-            $rule = '';
-            if (isset(CONFIG['Filter'][$ruleName])) {
-                $rule = CONFIG['Filter'][$ruleName];
-            }
+            isset(CONFIG['Filter'][$ruleName]) ? $rule = CONFIG['Filter'][$ruleName] : $rule = '';
             if (is_array($params)) {
                 foreach ($params as &$v) {
                     $v = preg_replace($rule, '', $v);
@@ -164,22 +169,24 @@ class App
 
     /**
      * 获取处理后的URL
+     * @param bool $real
      * @return mixed|string
      */
-    private static function getUrl()
+    private static function getUrl($real = false)
     {
         $url = $_SERVER["REQUEST_URI"];
         $bad = strstr($url, '?');
         if ($bad) {
             $url = str_replace($bad, '', $url);
         }
+        if($real){
+            return $url;
+        }
         if ($url == '/') {
             $url .= CONFIG['defaultRoute'];
         }
-        if (CONFIG['PrettifyUrl']['switch']) {
-            if (isset(CONFIG['PrettifyUrl']['rule'][$url])) {
-                return CONFIG['PrettifyUrl']['rule'][$url];
-            }
+        if (CONFIG['PrettifyUrl']['switch'] && isset(CONFIG['PrettifyUrl']['rule'][$url])) {
+            $url = CONFIG['PrettifyUrl']['rule'][$url];
         }
         return $url;
     }

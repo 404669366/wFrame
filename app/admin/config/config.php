@@ -24,12 +24,27 @@ return [
     //文件缓存
     'Cache' => [
         //缓存路径
-        'cachePath' => RUNTIME_PATH.'/cache',
+        'cachePath' => RUNTIME_PATH . '/cache',
+    ],
+    //模板配置
+    'Layout' => [
+        //模板开关
+        'switch' => true,
+        //默认使用模板
+        'use' => 'wFrame',
+        //模板文件注册(按加载顺序填写,当前视图使用关键字self)
+        'rule' => [
+            'wFrame' => [
+                'head',
+                'self',
+                'foot',
+            ],
+        ],
     ],
     //路由美化
     'PrettifyUrl' => [
         //美化开关
-        'switch' => false,
+        'switch' => true,
         //规则映射
         'rule' => [
             '/aaa' => '/index/index'

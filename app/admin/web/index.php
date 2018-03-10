@@ -13,6 +13,8 @@ defined('VENDOR_PATH') or define('VENDOR_PATH', __DIR__ . '/../../../vendor');
 defined('APP_PATH') or define('APP_PATH', __DIR__ . '/../');
 //视图路径
 defined('VIEW_PATH') or define('VIEW_PATH', __DIR__ . '/../view/');
+//模板路径
+defined('LAYOUT_PATH') or define('LAYOUT_PATH', __DIR__ . '/layout');
 //缓存路径
 defined('RUNTIME_PATH') or define('RUNTIME_PATH', __DIR__ . '/../../../runtime');
 //配置

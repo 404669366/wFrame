@@ -27,7 +27,7 @@ class FrameRun
             $object = new \wFrame\app\App();
             $object->run();
         } catch (Exception $e) {
-            \wFrame\app\Error::showError($e);
+            \wFrame\app\Error::showError($e->getMessage());
         }
     }
 

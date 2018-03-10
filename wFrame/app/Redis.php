@@ -76,7 +76,7 @@ class Redis
      * @param $config
      * @param array $attr
      */
-    private function __construct($config, $attr = array())
+    public function __construct($config, $attr = array())
     {
         $this->attr = array_merge($this->attr, $attr);
         $this->redis = new Redis();

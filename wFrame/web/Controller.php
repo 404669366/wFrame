@@ -13,6 +13,7 @@ use wFrame\app\Render;
 
 class Controller
 {
+
     public function beforeAction()
     {
     }
@@ -25,11 +26,13 @@ class Controller
      * 加载视图
      * @param string $view
      * @param array $data
-     * @return Render
+     * @param bool $layoutSwitch
+     * @param string $layout
+     * @return bool
      */
-    public function render($view = '', $data = [])
+    public function render($view = '', $data = [], $layout = '', $layoutSwitch = true)
     {
-        $render = new Render($view,static::class);
+        $render = new Render($view, static::class, $layout, $layoutSwitch);
         return $render->render($data);
     }
 

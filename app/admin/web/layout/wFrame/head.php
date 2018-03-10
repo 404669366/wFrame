@@ -13,8 +13,3 @@
     <script type="text/javascript" src="http://res.layui.com/layui/release/layer/dist/layer.js?v=3111"></script>
 </head>
 <body>
-    <script>
-        layer.msg('<?=$msg?>');
-    </script>
-</body>
-</html>
