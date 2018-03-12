@@ -8,19 +8,18 @@
 
 namespace app\controller;
 
-use wFrame\app\SqlBuild;
+use app\model\Test;
 use wFrame\web\Controller;
 
 class IndexController extends Controller
 {
     public function actionIndex()
     {
-        var_dump(SqlBuild::find()
-            ->select()
-            ->from(['user','u'])
-            ->where(['name',123])
-            ->getSql());
-        return $this->render('index', ['data' => '这里是首页']);
+        var_dump(Test::do()
+            ->where([['name','like','abc'],'id'=>[1,2,3],['age','<>',[1,2,3]],'bb'=>123])
+            ->buildSql());
+
+        //return $this->render('index', ['data' => '这里是首页']);
     }
 
 }

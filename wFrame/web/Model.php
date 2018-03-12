@@ -9,8 +9,9 @@
 namespace wFrame\web;
 
 
-class Model
-{
+use wFrame\app\SqlBuild;
 
+class Model extends SqlBuild
+{
 
 }
