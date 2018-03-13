@@ -38,6 +38,9 @@ class SqlBuild
         'and' => ' AND ',
         'or' => ' OR ',
         'on' => ' ON ',
+        'like' => ' LIKE ',
+        'find_in_set' => ' FIND_IN_SET ',
+        'between' => ' BETWEEN ',
         'insert' => 'INSERT INTO ',
         'delete' => 'DELETE ',
         'values' => ' VALUES ',
@@ -93,100 +96,114 @@ class SqlBuild
 
 
     /**
-     * where子句
-     * @param array $where
-     * like：[['age','<>',[1,2,3]],['name','like','abc'],'id'=>[1,2,3],'id'=>123,...]
+     *  where子句
+     * @param array $wheres
+     * like：[
+     *          ['age','<>',[1,2,3]],
+     *          ['name','like','abc'],
+     *          'id'=>[1,2,3],
+     *          'id'=>123,
+     *          ['age','between',[1,2]],
+     *          ['age','not between',[1,2]],
+     *          ['age','find_in_set',[1,2]]
+     *          ...
+     *      ]
      * @return $this
      */
-    public function where($where = [])
+    public function where($wheres = [])
     {
-        $this->selectOrder['where'] = '';
-        if ($where) {
-            end($where);
-            $endKey = key($where);
-            foreach ($where as $field => $v) {
-                if (!is_numeric($field) && !is_array($v)) {
-                    if ($field == $endKey && $this->selectOrder['where']) {
-                        $this->selectOrder['where'] .= $this->words['and'] . $field . "='" . $v . "' )";
-                    } elseif ($field == $endKey && !$this->selectOrder['where']) {
-                        $this->selectOrder['where'] .= $this->words['where'] . $field . "='" . $v . "'";
-                    } elseif ($field != $endKey && $this->selectOrder['where']) {
-                        $this->selectOrder['where'] .= $this->words['and'] . $field . "='" . $v . "'";
-                    } else {
-                        $this->selectOrder['where'] .= $this->words['where'] . '( ' . $field . "='" . $v . "'";
-                    }
-                } elseif (!is_numeric($field) && is_array($v)) {
-                    $v = "('" . implode("','", $v) . "')";
-                    if ($field == $endKey && $this->selectOrder['where']) {
-                        $this->selectOrder['where'] .= $this->words['and'] . $field . $this->words['in'] . $v . " )";
-                    } elseif ($field == $endKey && !$this->selectOrder['where']) {
-                        $this->selectOrder['where'] .= $this->words['where'] . $field . $this->words['in'] . $v;
-                    } elseif ($field != $endKey && $this->selectOrder['where']) {
-                        $this->selectOrder['where'] .= $this->words['and'] . $field . $this->words['in'] . $v;
-                    } else {
-                        $this->selectOrder['where'] .= $this->words['where'] . '( ' . $field . $this->words['in'] . $v;
-                    }
-                } else {
-                    if (count($v) == 3) {
-                        if (is_array($v[2])) {
-                            end($v[2]);
-                            $end = key($v[2]);
-                            if ($v[1] == 'like') {
-                                foreach ($v[2] as $k => $va) {
-                                    $va = $v[0] . " like '%" . $va . "%'";
-                                    if ($field == $endKey && $k == $end && $this->selectOrder['where']) {
-                                        $this->selectOrder['where'] .= $this->words['and'] . $va . ' )';
-                                    } elseif ($field == $endKey && $k == $end && !$this->selectOrder['where']) {
-                                        $this->selectOrder['where'] .= $this->words['where'] . $va;
-                                    } elseif ($this->selectOrder['where']) {
-                                        $this->selectOrder['where'] .= $this->words['and'] . $va;
-                                    } else {
-                                        $this->selectOrder['where'] .= $this->words['where'] . '( ' . $va;
-                                    }
-                                }
-                            } else {
-                                foreach ($v[2] as $k => $va) {
-                                    $va = $v[0] . ' ' . $v[1] . " '" . $va . "'";
-                                    if ($field == $endKey && $k == $end && $this->selectOrder['where']) {
-                                        $this->selectOrder['where'] .= $this->words['and'] . $va . ' )';
-                                    } elseif ($field == $endKey && $k == $end && !$this->selectOrder['where']) {
-                                        $this->selectOrder['where'] .= $this->words['where'] . $va;
-                                    } elseif ($this->selectOrder['where']) {
-                                        $this->selectOrder['where'] .= $this->words['and'] . $va;
-                                    } else {
-                                        $this->selectOrder['where'] .= $this->words['where'] . '( ' . $va;
-                                    }
-                                }
-                            }
-                        } else {
-                            $va = $v[1] == 'like' ? "'%" . $v[2] . "%'" : "'" . $v[2] . "'";
-                            if ($field == $endKey && $this->selectOrder['where']) {
-                                $this->selectOrder['where'] .= $this->words['and'] . $v[0] . ' ' . $v[1] . ' ' . $va . " )";
-                            } elseif ($field == $endKey && !$this->selectOrder['where']) {
-                                $this->selectOrder['where'] .= $this->words['where'] . $v[0] . ' ' . $v[1] . ' ' . $va;
-                            } elseif ($this->selectOrder['where']) {
-                                $this->selectOrder['where'] .= $this->words['and'] . $v[0] . ' ' . $v[1] . ' ' . $va;
-                            } else {
-                                $this->selectOrder['where'] .= $this->words['where'] . '( ' . $v[0] . ' ' . $v[1] . ' ' . $va;
-                            }
-                        }
-                    }
-                }
-            }
+        $this->selectOrder['where'] = $this->words['where'] . '( ' . $this->buildWhere($wheres) . ' )';
+        return $this;
+    }
+
+    /**
+     * and where子句（必须在where后使用，用法同where）
+     * @param array $wheres
+     * @return $this
+     */
+    public function andWhere($wheres = [])
+    {
+        if ($this->selectOrder['where']) {
+            $this->selectOrder['where'] .= $this->words['and'] . '( ' . $this->buildWhere($wheres) . ' )';
         }
         return $this;
     }
 
-    public function andWhere($where = [])
+    /**
+     * or where子句（必须在where后使用，用法同where）
+     * @param array $wheres
+     * @return $this
+     */
+    public function orWhere($wheres = [])
     {
-        $this->selectOrder['where'] .= $this->words['where'] . $where;
+        if ($this->selectOrder['where']) {
+            $this->selectOrder['where'] .= $this->words['or'] . '( ' . $this->buildWhere($wheres) . ' )';
+        }
         return $this;
     }
 
-    public function orWhere($where = [])
+    /**
+     * 构建where子句
+     * @param array $wheres
+     * @return string
+     */
+    private function buildWhere($wheres = [])
     {
-        $this->selectOrder['where'] .= $this->words['where'] . $where;
-        return $this;
+        $sqlArr = [];
+        if ($wheres) {
+            foreach ($wheres as $field => $where) {
+                $sql = '';
+                if (is_numeric($field) && count($where) == 3 && is_array($where[2])) {
+                    $key = strtolower($where[1]);
+                    $sql = $where[0] . $where[1] . "'" . implode("'" . $this->words['and'] . $where[0] . $where[1] . "'", $where[2]) . "'";
+                    if ($key == 'like') {
+                        $sql = $where[0] . $this->words['like'] . "'" . implode("'" . $this->words['and'] . $where[0] . $this->words['like'] . "'", $where[2]) . "'";
+                    }
+                    if ($key == 'in') {
+                        $sql = $where[0] . $this->words['in'] . "( '" . implode("','", $where[2]) . "' )";
+                    }
+                    if ($key == 'not in') {
+                        $sql = $where[0] . $this->words['not'] . $this->words['in'] . "( '" . implode("','", $where[2]) . "' )";
+                    }
+                    if ($key == 'find_in_set') {
+                        $sql = $this->words['find_in_set'] . "('" . implode(',', $where[2]) . "'," . $where[0] . ')';
+                    }
+                    if ($key == 'between' && count($where[2]) == 2) {
+                        $sql = $where[0] . $this->words['between'] . "'" . $where[2][0] . "'" . $this->words['and'] . "'" . $where[2][1] . "'";
+                    }
+                    if ($key == 'not between' && count($where[2]) == 2) {
+                        $sql = $where[0] . $this->words['not'] . $this->words['between'] . "'" . $where[2][0] . "'" . $this->words['and'] . "'" . $where[2][1] . "'";
+                    }
+                }
+                if (is_numeric($field) && count($where) == 3 && !is_array($where[2])) {
+                    $key = strtolower($where[1]);
+                    $sql = $where[0] . $where[1] . "'" . $where[2] . "'";
+                    if ($key == 'like') {
+                        $sql = $where[0] . $this->words['like'] . "'" . $where[2] . "'";
+                    }
+                    if ($key == 'in') {
+                        $sql = $where[0] . $this->words['in'] . "( '" . $where[2] . "' )";
+                    }
+                    if ($key == 'not in') {
+                        $sql = $where[0] . $this->words['not'] . $this->words['in'] . "( '" . $where[2] . "' )";
+                    }
+                    if ($key == 'find_in_set') {
+                        $sql = $this->words['find_in_set'] . "('" . $where[2] . "'," . $where[0] . ')';
+                    }
+                }
+                if (!is_numeric($field) && is_array($where)) {
+                    $sql = $field . $this->words['in'] . "( '" . implode("','", $where) . "' )";
+                }
+                if (!is_numeric($field) && !is_array($where)) {
+                    $sql = $field . "='" . $where . "'";
+                }
+                if ($sql) {
+                    array_push($sqlArr, $sql);
+                }
+            }
+            return implode($this->words['and'], $sqlArr);
+        }
+        return '';
     }
 
     /**

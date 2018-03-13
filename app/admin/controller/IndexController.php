@@ -16,7 +16,9 @@ class IndexController extends Controller
     public function actionIndex()
     {
         var_dump(Test::do()
-            ->where([['name','like','abc'],'id'=>[1,2,3],['age','<>',[1,2,3]],'bb'=>123])
+            ->where([['name','like','abc']])
+            ->andWhere([['name','like','abc'],['name','like','abc']])
+            ->orWhere([['name','like','abc']])
             ->buildSql());
 
         //return $this->render('index', ['data' => '这里是首页']);
