@@ -13,5 +13,6 @@ use wFrame\web\Model;
 
 class Test extends Model
 {
-    public $tableName = 'user';
+    public $DBName = 'adjms';
+    public $tableName = 'business_flow';
 }

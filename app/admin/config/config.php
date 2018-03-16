@@ -10,10 +10,13 @@ return [
     'defaultRoute' => 'index/index',
     //数据库
     'DB' => [
-        'dsn' => 'mysql:host=127.0.0.1;dbname=test',
-        'username' => 'root',
-        'password' => 'root',
-        'charset' => 'utf8,'
+        //键名（数据库名）
+        'adjms' => [
+            'dsn' => 'mysql:host=127.0.0.1;dbname=adjms',
+            'username' => 'root',
+            'password' => '123456',
+            'charset' => 'utf8,'
+        ],
     ],
     //redis
     'Redis' => [

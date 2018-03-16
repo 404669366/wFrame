@@ -15,13 +15,17 @@ class IndexController extends Controller
 {
     public function actionIndex()
     {
-        var_dump(Test::do()
-            ->where([['name','like','abc']])
-            ->andWhere([['name','like','abc'],['name','like','abc']])
-            ->orWhere([['name','like','abc']])
-            ->buildSql());
-
-        //return $this->render('index', ['data' => '这里是首页']);
+        Test::key();
+        exit();
+        $model = Test::find()->from([Test::tableName()=>'bf'])
+            ->select(['bf.id','ce.realname','ce.email'])
+            ->leftJoin(['com_employee'=>'ce'],['bf.user_id'=>'ce.userid'])
+            ->one();
+        var_dump($model);
+        exit();
+        $model->id = 120;
+        $re = $model->save();
+        var_dump($re);
     }
 
 }

@@ -39,9 +39,12 @@ class Error
                             <meta name="apple-mobile-web-app-capable" content="yes">
                             <meta name="format-detection" content="telephone=no">
                             <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-                            <script type="text/javascript" src="http://res.layui.com/layui/release/layer/dist/layer.js?v=3111"></script>
+                            <script type="text/javascript" src="http://apps.bdimg.com/libs/layer/2.1/layer.js"></script>
                         </head>
                         <body>
+                            <div style="width: 80%;margin: 100px auto;font-size: 18px;color: red">
+                            {$msg}
+                            </div>
                             <script>
                                 layer.msg("{$msg}");
                             </script>
